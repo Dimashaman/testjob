@@ -3,8 +3,10 @@
 namespace App\Form;
 
 use App\Entity\Book;
+use App\Entity\Author;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class BookType extends AbstractType
@@ -16,7 +18,15 @@ class BookType extends AbstractType
             ->add('Description')
             ->add('cover')
             ->add('publishYear')
-            ->add('authors')
+            ->add(
+                'authors',
+                EntityType::class,
+                array(
+                'class' => Author::class,
+                'multiple' => true,
+                'expanded' => true
+            )
+            );
         ;
     }
 

@@ -2,9 +2,11 @@
 
 namespace App\Form;
 
+use App\Entity\Book;
 use App\Entity\Author;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class AuthorType extends AbstractType
@@ -12,8 +14,16 @@ class AuthorType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('Books')
-        ;
+            ->add('name')
+            ->add(
+                'books',
+                EntityType::class,
+                array(
+                'class' => Book::class,
+                'multiple' => true,
+                'expanded' => true
+            )
+            );
     }
 
     public function configureOptions(OptionsResolver $resolver): void

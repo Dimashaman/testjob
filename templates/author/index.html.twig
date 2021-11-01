@@ -9,6 +9,7 @@
         <thead>
             <tr>
                 <th>Id</th>
+                <th>Name</th>
                 <th>actions</th>
             </tr>
         </thead>
@@ -16,6 +17,7 @@
         {% for author in authors %}
             <tr>
                 <td>{{ author.id }}</td>
+                <td>{{ author.name }}</td>
                 <td>
                     <a href="{{ path('author_show', {'id': author.id}) }}">show</a>
                     <a href="{{ path('author_edit', {'id': author.id}) }}">edit</a>
