@@ -22,7 +22,7 @@
                 <td>{{ book.id }}</td>
                 <td>{{ book.Title }}</td>
                 <td>{{ book.Description }}</td>
-                <td>{{ book.cover }}</td>
+                <td><img style="width: 120px" class="img-thumbnail" src="{{ asset('uploads/covers/' ~ book.cover) }}"></td>
                 <td>{{ book.publishYear }}</td>
                 <td>
                     <a href="{{ path('book_show', {'id': book.id}) }}">show</a>
