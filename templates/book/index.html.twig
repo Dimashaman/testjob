@@ -1,41 +1,52 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Book index{% endblock %}
+{% block title %}Book index
+{% endblock %}
 
 {% block body %}
-    <h1>Book index</h1>
+	<h1>Book index</h1>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Title</th>
-                <th>Description</th>
-                <th>Cover</th>
-                <th>PublishYear</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for book in books %}
-            <tr>
-                <td>{{ book.id }}</td>
-                <td>{{ book.Title }}</td>
-                <td>{{ book.Description }}</td>
-                <td><img style="width: 120px" class="img-thumbnail" src="{{ asset('uploads/covers/' ~ book.cover) }}"></td>
-                <td>{{ book.publishYear }}</td>
-                <td>
-                    <a href="{{ path('book_show', {'id': book.id}) }}">show</a>
-                    <a href="{{ path('book_edit', {'id': book.id}) }}">edit</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="6">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+	<table class="table">
+		<thead>
+			<tr>
+				<th>Id</th>
+				<th>Title</th>
+				<th>Description</th>
+				<th>Cover</th>
+				<th>PublishYear</th>
+				<th>actions</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<form method="get" action="{{ path('book_filter') }}">
+					<td><input name="id" type="number"></td>
+					<td><input name="title" type="text"></td>
+					<td><input name="description" type="text"></td>
+					<td></td>
+					<td><input name="publish_year" type="text"></td>
+					<td><input type="submit" value="Фильтр"></td>
+				</form>
+			</tr>
+			{% for book in books %}
+				<tr>
+					<td>{{ book.id }}</td>
+					<td>{{ book.Title }}</td>
+					<td>{{ book.Description }}</td>
+					<td><img style="width: 120px" class="img-thumbnail" src="{{ asset('uploads/covers/' ~ book.cover) }}"></td>
+					<td>{{ book.publishYear }}</td>
+					<td>
+						<a href="{{ path('book_show', {'id': book.id}) }}">show</a>
+						<a href="{{ path('book_edit', {'id': book.id}) }}">edit</a>
+					</td>
+				</tr>
+			{% else %}
+				<tr>
+					<td colspan="6">no records found</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
 
-    <a href="{{ path('book_new') }}">Create new</a>
+	<a href="{{ path('book_new') }}">Create new</a>
 {% endblock %}

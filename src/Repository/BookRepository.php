@@ -3,8 +3,9 @@
 namespace App\Repository;
 
 use App\Entity\Book;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\HttpFoundation\Request;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
  * @method Book|null find($id, $lockMode = null, $lockVersion = null)
@@ -17,6 +18,25 @@ class BookRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Book::class);
+    }
+
+    public function applyFilters(Request $request)
+    {
+        $qb = $this->createQueryBuilder('b');
+        $filters = array_filter(
+            [
+                'id' => $request->query->get('id'),
+                'title' => $request->query->get('title'),
+                'description' => $request->query->get('description'),
+                'publishYear' => $request->query->get('publish_year')
+            ]
+        );
+        foreach ($filters as $key => $value) {
+            $qb->andWhere('b.'. $key . ' LIKE :val')
+            ->setParameter('val', '%' . $value . '%');
+        }
+        return $qb->getQuery()
+        ->getResult();
     }
 
     // /**

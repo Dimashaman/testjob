@@ -27,6 +27,16 @@ class BookController extends AbstractController
     }
 
     /**
+     * @Route("/filter", name="book_filter", methods={"GET"})
+     */
+    public function filtered(Request $request, BookRepository $bookRepository) : Response
+    {
+        return $this->render('book/index.html.twig', [
+            'books' => $bookRepository->applyFilters($request),
+        ]);
+    }
+
+    /**
      * @Route("/new", name="book_new", methods={"GET","POST"})
      */
     public function new(Request $request, FileUploadService $fileUploadService): Response
