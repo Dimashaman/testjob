@@ -29,15 +29,18 @@
 				</form>
 			</tr>
 			{% for book in books %}
-				<tr>
-					<td>{{ book.id }}</td>
-					<td>{{ book.Title }}</td>
-					<td>{{ book.Description }}</td>
+				<tr class="bookRow" id="bookRow{{ book.id }}">
+					<td><input class="bookInput" type="number" readonly id="bookId" style="border: 0" name="bookId" value="{{ book.id }}"></td>
+					<td><input class="bookInput" type="text" readonly id="bookTitle" style="border: 0" name="bookTitle" value="{{ book.title }}"></td>
+					<td><input class="bookInput" type="text" readonly id="bookDescription" style="border: 0" name="bookDescription" value="{{ book.description }}"></td>
 					<td><img style="width: 120px" class="img-thumbnail" src="{{ asset('uploads/covers/' ~ book.cover) }}"></td>
-					<td>{{ book.publishYear }}</td>
+					<td><input class="bookInput" type="number" readonly id="bookPublishYear" style="border: 0" name="bookPublishYear" value="{{ book.publishYear }}"></td>
 					<td>
-						<a href="{{ path('book_show', {'id': book.id}) }}">show</a>
-						<a href="{{ path('book_edit', {'id': book.id}) }}">edit</a>
+						<a class="inlineEditLink" href="#">inline edit</a>
+						<a class="inlineEditSave" hidden href="#">Save</a>
+						<a class="inlineEditCancel" hidden href="#">Cancel</a>
+						<a class="bookShowLink" href="{{ path('book_show', {'id': book.id}) }}">show</a>
+						<a class="bookEditLink" href="{{ path('book_edit', {'id': book.id}) }}">edit</a>
 					</td>
 				</tr>
 			{% else %}
@@ -49,4 +52,5 @@
 	</table>
 
 	<a href="{{ path('book_new') }}">Create new</a>
+    <script src="{{ asset('js/bookInlineEdit.js') }}"></script>
 {% endblock %}

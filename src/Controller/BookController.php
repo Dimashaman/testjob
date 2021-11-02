@@ -98,6 +98,21 @@ class BookController extends AbstractController
     }
 
     /**
+     * @Route("/{id}/inlineEdit", name="book_inline_edit", methods={"GET","POST"})
+     */
+    public function inlineEdit(Request $request, Book $book) : Response
+    {
+        $form = $this->createForm(BookType::class, $book);
+        $form->submit($request->request->all());
+
+        if ($form->isSubmitted()) {
+            $this->getDoctrine()->getManager()->flush();
+        }
+
+        return new Response('success', Response::HTTP_OK);
+    }
+
+    /**
      * @Route("/{id}", name="book_delete", methods={"POST"})
      */
     public function delete(Request $request, Book $book): Response
