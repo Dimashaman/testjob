@@ -23,18 +23,37 @@ class BookRepository extends ServiceEntityRepository
     public function applyFilters(Request $request)
     {
         $qb = $this->createQueryBuilder('b');
-        $filters = array_filter(
+        $stringFilters = array_filter(
             [
-                'id' => $request->query->get('id'),
                 'title' => $request->query->get('title'),
-                'description' => $request->query->get('description'),
-                'publishYear' => $request->query->get('publish_year')
+                'description' => $request->query->get('description')
             ]
         );
-        foreach ($filters as $key => $value) {
+        
+        $integerFilters = array_filter(
+            [
+                'id' => $request->query->get('id'),
+                'publishYear' => $request->query->get('publishYear')
+            ]
+        );
+
+        foreach ($stringFilters as $key => $value) {
             $qb->andWhere('b.'. $key . ' LIKE :val')
             ->setParameter('val', '%' . $value . '%');
         }
+
+        foreach ($integerFilters as $key => $value) {
+            $qb->andWhere('b.'. $key . ' = :intval')
+            ->setParameter('intval', $value);
+        }
+
+        if ($author = $request->query->get('author')) {
+            $qb->leftJoin('b.authors', 'a')
+            ->andWhere('a.id = :authorId')
+            ->setParameter('authorId', intval($author));
+        }
+
+
         return $qb->getQuery()
         ->getResult();
     }

@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Book;
 use App\Form\BookType;
+use App\Repository\AuthorRepository;
 use App\Repository\BookRepository;
 use App\Service\FileUploadService;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,20 +20,22 @@ class BookController extends AbstractController
     /**
      * @Route("/", name="book_index", methods={"GET"})
      */
-    public function index(BookRepository $bookRepository): Response
+    public function index(BookRepository $bookRepository, AuthorRepository $authorRepository): Response
     {
         return $this->render('book/index.html.twig', [
             'books' => $bookRepository->findAll(),
+            'authors' => $authorRepository->findAll()
         ]);
     }
 
     /**
      * @Route("/filter", name="book_filter", methods={"GET"})
      */
-    public function filter(Request $request, BookRepository $bookRepository) : Response
+    public function filter(Request $request, BookRepository $bookRepository, AuthorRepository $authorRepository) : Response
     {
         return $this->render('book/index.html.twig', [
             'books' => $bookRepository->applyFilters($request),
+            'authors' => $authorRepository->findAll()
         ]);
     }
 
