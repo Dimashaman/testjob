@@ -29,6 +29,11 @@ class Author
      */
     private $name;
 
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $booksAmount;
+
     public function __construct()
     {
         $this->books = new ArrayCollection();
@@ -76,6 +81,18 @@ class Author
     public function setName(string $name): self
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    public function getBooksAmount(): ?int
+    {
+        return $this->booksAmount;
+    }
+
+    public function setBooksAmount(?int $booksAmount): self
+    {
+        $this->booksAmount = $booksAmount;
 
         return $this;
     }
