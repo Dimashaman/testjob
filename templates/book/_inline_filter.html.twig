@@ -1,0 +1,25 @@
+<form method="get" action="{{ path('book_filter') }}">
+	<div class='row'>
+		<div class="col-sm form-group">
+			<input class="form-control" name="id" type="number">
+		</div>
+		<div class="col-sm"><input class="form-control" name="title" type="text"></div>
+
+		<div class="col-sm">
+			<input class="form-control" name="description" type="text"></div>
+
+		<div class="col-sm"></div>
+		<div class="col-sm"><input class="form-control" name="publishYear" type="text"></div>
+
+		<div class="col-sm">
+			<select name="author">
+				{% for author in authors %}
+					<option value="{{author.id}}">{{author.name}}</option>
+                {% endfor %}
+			</select>
+		</div>
+
+			<div class="col-sm"><input class="form-control" type="submit" value="Фильтр"></div>
+
+		</div>
+	</form>

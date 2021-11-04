@@ -15,27 +15,7 @@
 			<div class="col-sm">Authors</div>
 			<div class="col-sm">actions</div>
 		</div>
-		<form method="get" action="{{ path('book_filter') }}">
-			<div class='row'>
-				<div class="col-sm form-group">
-					<input class="form-control" name="id" type="number">
-				</div>
-				<div class="col-sm"><input class="form-control" name="title" type="text"></div>
-
-				<div class="col-sm">
-					<input class="form-control" name="description" type="text"></div>
-
-				<div class="col-sm"></div>
-				<div class="col-sm"><input class="form-control" name="publish_year" type="text"></div>
-
-				<div class="col-sm"><input class="form-control" name="author" type="text"></div>
-
-				<div class="col-sm"><input class="form-control" type="submit" value="Фильтр"></div>
-
-			</div>
-		</form>
-
-
+{% include 'book/_inline_filter.html.twig' with {'authors': authors } %}
 		{% for book in books %}
 			{% include 'book/_inline.html.twig' with {'book': book } %}
 		{% else %}
