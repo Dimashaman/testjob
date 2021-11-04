@@ -22,7 +22,7 @@ class Author
     /**
      * @ORM\ManyToMany(targetEntity=Book::class, inversedBy="authors")
      */
-    private $Books;
+    private $books;
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -31,7 +31,7 @@ class Author
 
     public function __construct()
     {
-        $this->Books = new ArrayCollection();
+        $this->books = new ArrayCollection();
     }
 
     public function __toString()
@@ -49,13 +49,13 @@ class Author
      */
     public function getBooks(): Collection
     {
-        return $this->Books;
+        return $this->books;
     }
 
     public function addBook(Book $book): self
     {
-        if (!$this->Books->contains($book)) {
-            $this->Books[] = $book;
+        if (!$this->books->contains($book)) {
+            $this->books[] = $book;
         }
 
         return $this;
@@ -63,7 +63,7 @@ class Author
 
     public function removeBook(Book $book): self
     {
-        $this->Books->removeElement($book);
+        $this->books->removeElement($book);
 
         return $this;
     }

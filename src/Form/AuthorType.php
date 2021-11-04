@@ -18,11 +18,11 @@ class AuthorType extends AbstractType
             ->add(
                 'books',
                 EntityType::class,
-                array(
-                'class' => Book::class,
-                'multiple' => true,
-                'expanded' => true
-            )
+                [
+                    'class' => Book::class,
+                    'multiple' => true,
+                    'expanded' => true
+                ]
             );
     }
 

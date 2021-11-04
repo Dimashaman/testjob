@@ -40,7 +40,7 @@ class Book
     private $publishYear;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Author::class, mappedBy="Books")
+     * @ORM\ManyToMany(targetEntity=Author::class, mappedBy="books")
      */
     private $authors;
 
