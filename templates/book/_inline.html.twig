@@ -1,0 +1,19 @@
+<div class="row bookRow" id="{{ book.id }}">
+	<div class="col-sm" name="bookId">{{ book.id }}</div>
+	<div class="col-sm">{{ book.title }}</div>
+	<div class="col-sm">{{ book.description }}</div>
+	<div class="col-sm"><img style="width: 120px" class="img-thumbnail" src="{{ asset('uploads/covers/' ~ book.cover) }}"></div>
+	<div class="col-sm">{{ book.publishYear }}</div>
+	<div class="col-sm">
+		{% for author in book.authors %}
+			{{ author }}
+		{% endfor %}
+	</div>
+	<div class="col-sm">
+		<a class="inlineEditLink" href="#">inline edit</a>
+		<a class="inlineEditSave" hidden href="#">Save</a>
+		<a class="inlineEditCancel" hidden href="#">Cancel</a>
+		<a class="bookShowLink" href="{{ path('book_show', {'id': book.id}) }}">show</a>
+		<a class="bookEditLink" href="{{ path('book_edit', {'id': book.id}) }}">edit</a>
+	</div>
+</div>

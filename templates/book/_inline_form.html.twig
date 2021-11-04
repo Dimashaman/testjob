@@ -1,0 +1,27 @@
+{{ form_start(form, {'action': book.id ~ '/inlineEdit', 'id': 'book'})}}
+<div class="row">
+	<div
+		class="col-sm"><!-- id -->
+	</div>
+	<div class="col-sm">
+		{{ form_row(form.title)}}
+
+	</div>
+	<div class="col-sm">
+		{{ form_row(form.description) }}
+	</div>
+	<div class="col-sm">
+		{{ form_row(form.cover) }}
+	</div>
+	<div class="col-sm">
+		{{ form_row(form.publishYear) }}
+	</div>
+	<div class="col-sm">
+		{{ form_row(form.authors)}}
+	</div>
+	<div class="col-sm">
+		<a class="inlineEditSave" href="#">Save</a>
+		<a class="inlineEditCancel" href="#">Cancel</a>
+	</div>
+</divclass="row">
+{{ form_end(form) }}

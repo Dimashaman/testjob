@@ -29,7 +29,7 @@ class BookController extends AbstractController
     /**
      * @Route("/filter", name="book_filter", methods={"GET"})
      */
-    public function filtered(Request $request, BookRepository $bookRepository) : Response
+    public function filter(Request $request, BookRepository $bookRepository) : Response
     {
         return $this->render('book/index.html.twig', [
             'books' => $bookRepository->applyFilters($request),
@@ -87,7 +87,7 @@ class BookController extends AbstractController
                 $book->setCover($fileUploadService->uploadAndReturnPath($coverImageFile));
             }
             $this->getDoctrine()->getManager()->flush();
-
+            
             return $this->redirectToRoute('book_index', [], Response::HTTP_SEE_OTHER);
         }
 
@@ -103,13 +103,18 @@ class BookController extends AbstractController
     public function inlineEdit(Request $request, Book $book) : Response
     {
         $form = $this->createForm(BookType::class, $book);
-        $form->submit($request->request->all());
-
-        if ($form->isSubmitted()) {
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
             $this->getDoctrine()->getManager()->flush();
+            return $this->render('book/_inline.html.twig', [
+                'book' => $book
+            ]);
         }
 
-        return new Response('success', Response::HTTP_OK);
+        return $this->render('book/_inline_form.html.twig', [
+            'book' => $book,
+            'form' => $form->createView(),
+        ]);
     }
 
     /**
