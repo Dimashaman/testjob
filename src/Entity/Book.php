@@ -5,10 +5,12 @@ namespace App\Entity;
 use App\Repository\BookRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass=BookRepository::class)
+ * @ORM\HasLifecycleCallbacks()
  */
 class Book
 {
