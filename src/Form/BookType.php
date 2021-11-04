@@ -40,7 +40,8 @@ class BookType extends AbstractType
                 [
                     'class' => Author::class,
                     'multiple' => true,
-                    'expanded' => true
+                    'expanded' => true,
+                    'by_reference' => false
                 ]
             );
         ;
