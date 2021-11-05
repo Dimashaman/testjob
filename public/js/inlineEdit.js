@@ -4,15 +4,21 @@ const table = document.querySelector('.table');
 const model = table.dataset.model;
 table.addEventListener('click', _inlineEdit = function (e) {
     if (e.target.classList.contains('inlineEditLink')) {
-        const targetTableRow = e.target.parentNode.parentNode;
+        var targetTableRow = e.target.parentNode.parentNode;
         const id = targetTableRow.querySelector('[name="bookId"]').innerText;
-        getInlineForm('/'+ model + '/' + id + '/inlineEdit')
+        getInlineForm('/' + model + '/' + id + '/inlineEdit')
             .then(function (response) {
                 response.text().then(function (text) {
+                    var rowCopy = targetTableRow.cloneNode(true);
                     targetTableRow.innerHTML = text;
-                    let form = targetTableRow.querySelector('[name='+ model + ']');
+                    let form = targetTableRow.querySelector('[name=' + model + ']');
                     saveLink = targetTableRow.querySelector('.inlineEditSave');
                     saveLink.addEventListener('click', () => { postInlineFormAndReplaceView(form, targetTableRow) })
+                    cancelLink = targetTableRow.querySelector('.inlineEditCancel');
+                    cancelLink.addEventListener('click', () => {
+                        targetTableRow.outerHTML = rowCopy.outerHTML;
+                        table.addEventListener('click', _inlineEdit);
+                    })
                 })
                 table.removeEventListener('click', _inlineEdit);
             })
@@ -37,12 +43,4 @@ async function getInlineForm(url = '') {
         method: 'GET'
     });
     return await response;
-}
-
-async function postData(url = '', data = {}) {
-    const response = await fetch(url, {
-        method: 'POST',
-        body: new URLSearchParams(data)
-    });
-    return await response; // parses JSON response into native JavaScript objects
 }
