@@ -23,23 +23,21 @@ class BookRepository extends ServiceEntityRepository
         parent::__construct($registry, Book::class);
     }
 
-    public function getMinTwoCoAuthorsNativeSql()
+    public function findByMinTwoCoAuthorsNativeSql()
     {
         $em = $this->getEntityManager();
         $rsm = new ResultSetMappingBuilder($em, ResultSetMappingBuilder::COLUMN_RENAMING_INCREMENT);
         $rsm->addRootEntityFromClassMetadata(Book::class, 'b');
         $rsm->addJoinedEntityFromClassMetadata(Author::class, 'a', 'b', 'authors');
         $sql = "SELECT {$rsm->generateSelectClause()} FROM 
-				(SELECT b.id
+				(SELECT b.*
                 FROM book b
                 INNER JOIN author_book ab
                 ON b.id = ab.book_id
                 GROUP BY b.id
-                HAVING COUNT(ab.book_id) >= 2) t
-				INNER JOIN book b
-                ON t.id = b.id
+                HAVING COUNT(ab.book_id) >= 2) b
 				INNER JOIN author_book ab
-				ON t.id = ab.book_id
+				ON b.id = ab.book_id
 				INNER JOIN author a
 				ON ab.author_id = a.id";
         $query = $em->createNativeQuery($sql, $rsm);
