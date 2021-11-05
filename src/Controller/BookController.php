@@ -53,9 +53,16 @@ class BookController extends AbstractController
             if ($coverImageFile) {
                 $book->setCover($fileUploadService->uploadAndReturnPath($coverImageFile));
             }
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($book);
-            $entityManager->flush();
+            $em = $this->getDoctrine()->getManager();
+            $em->getConnection()->beginTransaction();
+            try {
+                $em->persist($book);
+                $em->flush();
+                $em->getConnection()->commit();
+            } catch (Exception $e) {
+                $em->getConnection()->rollBack();
+                throw $e;
+            }
 
             return $this->redirectToRoute('book_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -89,7 +96,15 @@ class BookController extends AbstractController
             if ($coverImageFile) {
                 $book->setCover($fileUploadService->uploadAndReturnPath($coverImageFile));
             }
-            $this->getDoctrine()->getManager()->flush();
+            $em = $this->getDoctrine()->getManager();
+            $em->getConnection()->beginTransaction();
+            try {
+                $em->flush();
+                $em->getConnection()->commit();
+            } catch (Exception $e) {
+                $em->getConnection()->rollBack();
+                throw $e;
+            }
             
             return $this->redirectToRoute('book_index', [], Response::HTTP_SEE_OTHER);
         }

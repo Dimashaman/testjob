@@ -24,22 +24,9 @@ class BookSubscriber implements EventSubscriber
     {
         return [
             Events::preRemove,
-            Events::prePersist,
             Events::onFlush,
-            // Events::postLoad
         ];
     }
-
-    // public function postLoad(LifecycleEventArgs $args)
-    // {
-    //     $bookEntity = $args->getEntity();
-        
-    //     if (!($bookEntity instanceof Book)) {
-    //         return;
-    //     }
-
-    //     $this->
-    // }
 
     public function onFlush(OnFlushEventArgs $eventArgs)
     {
@@ -47,11 +34,20 @@ class BookSubscriber implements EventSubscriber
         $uow = $em->getUnitOfWork();
 
         foreach ($uow->getScheduledCollectionDeletions() as $col) {
-            dd($col->getOwner()->getAuthors());
+            if ($col->getOwner() instanceof Book) {
+                foreach ($col->getDeleteDiff() as $author) {
+                    $author->setBooksAmount($author->getBooksAmount() - 1);
+                }
+            }
+
+            if ($col->getOwner() instanceof Author) {
+                $author = $col->getOwner();
+                $author->setBooksAmount(0);
+                $uow->recomputeSingleEntityChangeSet($em->getClassMetadata(get_class($author)), $author);
+            }
         }
 
         foreach ($uow->getScheduledCollectionUpdates() as $col) {
-            // dd($col);
             if ($col->getOwner() instanceof Book) {
                 foreach ($col->getInsertDiff() as $author) {
                     $author->setBooksAmount($author->getBooksAmount() + 1);
@@ -66,27 +62,14 @@ class BookSubscriber implements EventSubscriber
             if ($col->getOwner() instanceof Author) {
                 $author = $col->getOwner();
                 if (!empty($col->getInsertDiff())) {
-                    $author->setBooksAmount($author->getBooksAmount() + count($col->getInsertDiff()));
+                    $author->setBooksAmount($author->getBooks()->count());
                 }
                 if (!empty($col->getDeleteDiff())) {
-                    $author->setBooksAmount($author->getBooksAmount() - count($col->getDeleteDiff()));
+                    $author->setBooksAmount($author->getBooks()->count());
                 }
 
                 $uow->recomputeSingleEntityChangeSet($em->getClassMetadata(get_class($author)), $author);
             }
-        }
-    }
-
-    public function prePersist(LifecycleEventArgs $args)
-    {
-        $bookEntity = $args->getEntity();
-        
-        if (!($bookEntity instanceof Book)) {
-            return;
-        }
-
-        foreach ($bookEntity->getAuthors() as $author) {
-            $author->setBooksAmount($author->getBooksAmount() + 1);
         }
     }
 
