@@ -10,14 +10,17 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 class BookType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('title')
-            ->add('description')
+            ->add('title', TextType::class)
+            ->add('description', TextareaType::class)
             ->add('cover', FileType::class, [
                 'label' => 'cover (image file)',
                 'mapped' => false,
@@ -33,7 +36,7 @@ class BookType extends AbstractType
                     ])
                 ],
             ])
-            ->add('publishYear')
+            ->add('publishYear', IntegerType::class)
             ->add(
                 'authors',
                 EntityType::class,
