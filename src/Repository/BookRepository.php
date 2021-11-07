@@ -23,44 +23,82 @@ class BookRepository extends ServiceEntityRepository
         parent::__construct($registry, Book::class);
     }
 
-    public function findByMinTwoCoAuthorsNativeSql()
+    public function findByMinCoAuthorsNativeSql(int $authorsAmount)
     {
         $em = $this->getEntityManager();
-        $rsm = new ResultSetMappingBuilder($em, ResultSetMappingBuilder::COLUMN_RENAMING_INCREMENT);
-        $rsm->addRootEntityFromClassMetadata(Book::class, 'b');
-        $rsm->addJoinedEntityFromClassMetadata(Author::class, 'a', 'b', 'authors');
-        $sql = "SELECT {$rsm->generateSelectClause()} FROM 
-				(SELECT b.*
-                FROM book b
-                INNER JOIN author_book ab
-                ON b.id = ab.book_id
-                GROUP BY b.id
-                HAVING COUNT(ab.book_id) >= 2) b
-				INNER JOIN author_book ab
-				ON b.id = ab.book_id
-				INNER JOIN author a
-				ON ab.author_id = a.id";
-        $query = $em->createNativeQuery($sql, $rsm);
+        $conn = $em->getConnection();
+
+        $bookIdsWithNAuthorsSql = "SELECT b.id
+            FROM book b
+            INNER JOIN author_book ab
+            ON b.id = ab.book_id
+            GROUP BY b.id
+            HAVING COUNT(ab.book_id) >= :authorsAmount";
+        $stmt = $conn->prepare($bookIdsWithNAuthorsSql);
+        $result = $stmt->executeQuery(['authorsAmount' => $authorsAmount]);
+        $bookIds = array_column($result->fetchAllAssociative(), 'id');
+
+        $entityMapper = new ResultSetMappingBuilder($em, ResultSetMappingBuilder::COLUMN_RENAMING_INCREMENT);
+        $entityMapper->addRootEntityFromClassMetadata(Book::class, 'b');
+        $entityMapper->addJoinedEntityFromClassMetadata(Author::class, 'a', 'b', 'authors');
+
+        $booksWithAuthorsSql = "SELECT {$entityMapper->generateSelectClause()}
+            FROM book b
+            INNER JOIN author_book ab
+            ON b.id = ab.book_id
+            INNER JOIN author a
+            ON ab.author_id = a.id
+            WHERE b.id IN (:bookIds)";
+
+        $query = $em->createNativeQuery($booksWithAuthorsSql, $entityMapper);
+        $query->setParameter('bookIds', $bookIds);
 
         return $query->getResult();
     }
 
+    public function findByMinCoAuthorsDql(int $authorsAmount)
+    {
+        $qb = $this->createQueryBuilder('b')
+            ->select('b.id')
+            ->innerJoin('b.authors', 'a')
+            ->groupBy('b.id')
+            ->having('COUNT(a.id) >= :authorsAmount')
+            ->setParameter('authorsAmount', $authorsAmount);
+        
+        $bookIds = array_column($qb->getQuery()->execute(), 'id');
+        
+        return $this->findMany($bookIds);
+    }
+
+    /**
+     * @return Book[] Returns an array of Book objects
+    */
+    public function findMany(array $ids)
+    {
+        return $this->createQueryBuilder('b')
+            ->andWhere('b.id IN(:ids)')
+            ->setParameter('ids', $ids)
+            ->orderBy('b.id', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * @param Request $request
+     * @return Book[]
+     */
     public function applyFilters(Request $request)
     {
         $qb = $this->createQueryBuilder('b');
-        $stringFilters = array_filter(
-            [
-                'title' => $request->query->get('title'),
-                'description' => $request->query->get('description')
-            ]
-        );
+        $stringFilters = array_filter([
+            'title' => (string) $request->query->get('title'),
+            'description' => (string) $request->query->get('description')
+        ]);
         
-        $integerFilters = array_filter(
-            [
-                'id' => $request->query->get('id'),
-                'publishYear' => $request->query->get('publishYear')
-            ]
-        );
+        $integerFilters = array_filter([
+            'id' => (int) $request->query->get('id'),
+            'publishYear' => (int) $request->query->get('publishYear')
+        ]);
 
         foreach ($stringFilters as $key => $value) {
             $qb->andWhere('b.'. $key . ' LIKE :val')
@@ -78,27 +116,9 @@ class BookRepository extends ServiceEntityRepository
             ->setParameter('authorId', intval($author));
         }
 
-
         return $qb->getQuery()
-        ->getResult();
+            ->getResult();
     }
-
-    // /**
-    //  * @return Book[] Returns an array of Book objects
-    //  */
-    /*
-    public function findByExampleField($value)
-    {
-        return $this->createQueryBuilder('b')
-            ->andWhere('b.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('b.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
 
     /*
     public function findOneBySomeField($value): ?Book
