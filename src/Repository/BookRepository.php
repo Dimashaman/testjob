@@ -15,6 +15,8 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
  * @method Book|null findOneBy(array $criteria, array $orderBy = null)
  * @method Book[]    findAll()
  * @method Book[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method Book[]    findByMinCoAuthorsNativeSql()
+ * @method Book[]    findByMinCoAuthorsDql()
  */
 class BookRepository extends ServiceEntityRepository
 {
@@ -66,7 +68,7 @@ class BookRepository extends ServiceEntityRepository
             ->setParameter('authorsAmount', $authorsAmount);
         
         $bookIds = array_column($qb->getQuery()->execute(), 'id');
-        
+
         return $this->findMany($bookIds);
     }
 

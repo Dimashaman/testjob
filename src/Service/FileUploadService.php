@@ -7,6 +7,8 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class FileUploadService
 {
+    private ParameterBagInterface $params;
+
     public function __construct(ParameterBagInterface $params)
     {
         $this->params = $params;

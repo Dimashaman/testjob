@@ -2,11 +2,13 @@
 
 namespace App\Controller;
 
+use Exception;
 use App\Entity\Book;
 use App\Form\BookType;
-use App\Repository\AuthorRepository;
+use Doctrine\ORM\EntityManager;
 use App\Repository\BookRepository;
 use App\Service\FileUploadService;
+use App\Repository\AuthorRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -53,6 +55,9 @@ class BookController extends AbstractController
             if ($coverImageFile) {
                 $book->setCover($fileUploadService->uploadAndReturnPath($coverImageFile));
             }
+            /**
+             * @var EntityManager $em
+             */
             $em = $this->getDoctrine()->getManager();
             $em->getConnection()->beginTransaction();
             try {
@@ -96,6 +101,9 @@ class BookController extends AbstractController
             if ($coverImageFile) {
                 $book->setCover($fileUploadService->uploadAndReturnPath($coverImageFile));
             }
+            /**
+             * @var EntityManager $em
+             */
             $em = $this->getDoctrine()->getManager();
             $em->getConnection()->beginTransaction();
             try {

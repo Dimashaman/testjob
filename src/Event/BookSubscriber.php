@@ -2,10 +2,11 @@
 
 namespace App\Event;
 
-use App\Entity\Author;
 use App\Entity\Book;
+use App\Entity\Author;
 use Doctrine\ORM\Events;
 use Doctrine\Common\EventSubscriber;
+use Doctrine\ORM\PersistentCollection;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Symfony\Component\Filesystem\Filesystem;
@@ -32,14 +33,18 @@ class BookSubscriber implements EventSubscriber
     {
         $em = $eventArgs->getEntityManager();
         $uow = $em->getUnitOfWork();
-
         foreach ($uow->getScheduledCollectionDeletions() as $col) {
+            /**
+             * @var PersistentCollection $col
+             */
             if ($col->getOwner() instanceof Book) {
                 foreach ($col->getDeleteDiff() as $author) {
                     $author->setBooksAmount($author->getBooksAmount() - 1);
                 }
             }
-
+            /**
+             * @var PersistentCollection $col
+             */
             if ($col->getOwner() instanceof Author) {
                 $author = $col->getOwner();
                 $author->setBooksAmount(0);
@@ -48,15 +53,19 @@ class BookSubscriber implements EventSubscriber
         }
 
         foreach ($uow->getScheduledCollectionUpdates() as $col) {
+            /**
+             * @var PersistentCollection $col
+             */
             if ($col->getOwner() instanceof Book) {
                 foreach ($col->getInsertDiff() as $author) {
                     $author->setBooksAmount($author->getBooksAmount() + 1);
+                    $uow->recomputeSingleEntityChangeSet($em->getClassMetadata(get_class($author)), $author);
                 }
 
                 foreach ($col->getDeleteDiff() as $author) {
                     $author->setBooksAmount($author->getBooksAmount() - 1);
+                    $uow->recomputeSingleEntityChangeSet($em->getClassMetadata(get_class($author)), $author);
                 }
-                $uow->recomputeSingleEntityChangeSet($em->getClassMetadata(get_class($author)), $author);
             }
 
             if ($col->getOwner() instanceof Author) {
