@@ -1,6 +1,26 @@
 version: '3'
 
 services:
+  php:
+    build: ./docker/php-image/.
+    ports:
+      - 9000:9000
+    volumes:
+      - data:/_data
+      - .:/var/www/html
+    networks:
+      - backend
+  nginx:
+    image: nginx:stable-alpine
+    volumes:
+      - .:/var/www/html
+      - ./docker/nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - "8001:80"
+    networks:
+      - backend
+    depends_on:
+      - php
 ###> symfony/mailer ###
   mailer:
     image: schickling/mailcatcher
@@ -11,4 +31,12 @@ services:
   database:
     ports:
       - "5432:5432"
+    networks:
+      - backend
 ###< doctrine/doctrine-bundle ###
+networks:
+  backend:
+    driver: bridge
+volumes:
+  data:
+    driver: local
