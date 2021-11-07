@@ -42,7 +42,7 @@ final class BookFactory extends ModelFactory
             'title' => self::faker()->words(3, true),
             'description' => self::faker()->text(),
             'cover' => self::faker()->image('public/uploads/covers', 640, 480, null, false, true, null, false),
-            'publishYear' => self::faker()->randomNumber(2, 32767),
+            'publishYear' => random_int(1700, 2021),
         ];
     }
 

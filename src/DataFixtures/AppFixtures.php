@@ -11,6 +11,6 @@ class AppFixtures extends Fixture
 {
     public function load(ObjectManager $manager): void
     {
-        AuthorFactory::createMany(10, ['books' => BookFactory::new()->many(0, 4)]);
+        BookFactory::createMany(10, ['authors' => AuthorFactory::new()->many(0, 4)]);
     }
 }
