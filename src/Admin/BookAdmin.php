@@ -3,6 +3,7 @@
 namespace App\Admin;
 
 use App\Entity\Author;
+use App\Service\FileUploadService;
 use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Show\ShowMapper;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
@@ -14,18 +15,11 @@ use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Sonata\AdminBundle\FieldDescription\FieldDescriptionInterface;
 
 final class BookAdmin extends AbstractAdmin
 {
-    private ContainerInterface $container;
-
-    public function __construct($code, $class, $baseControllerName, $container)
-    {
-        parent::__construct($code, $class, $baseControllerName);
-        $this->container = $container;
-    }
+    private FileUploadService $fileUploadService;
 
     protected function configureFormFields(FormMapper $form): void
     {
@@ -75,6 +69,11 @@ final class BookAdmin extends AbstractAdmin
         ->add('authors');
     }
 
+    public function setFileUploadService(FileUploadService $fileUploadService)
+    {
+        $this->fileUploadService = $fileUploadService;
+    }
+
     public function prePersist(object $book): void
     {
         $this->manageImageUpload($book);
@@ -119,7 +118,11 @@ final class BookAdmin extends AbstractAdmin
 
     private function manageImageUpload($book) : void
     {
-        $fileUploadService = $this->container->get('App\Service\FileUploadService');
-        $book->setCover($fileUploadService->uploadAndReturnPath($this->getForm()->get('cover')->getData()));
+        if ($this->hasSubject()) {
+            $coverImageFile = $this->getForm()->get('cover')->getData();
+            if ($coverImageFile) {
+                $book->setCover($this->fileUploadService->uploadAndReturnPath($coverImageFile));
+            }
+        }
     }
 }

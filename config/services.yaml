@@ -39,7 +39,7 @@ services:
         resource: "../src/Event/"
         tags:
             - { name: "doctrine.event_subscriber", connection: default }
-    
+
     App\Service\FileUploadService:
         public: true
 
@@ -51,6 +51,8 @@ services:
 
     admin.books:
         class: App\Admin\BookAdmin
-        arguments: [null, App\Entity\Book, null, '@service_container']
+        arguments: [~, App\Entity\Book, ~]
         tags:
             - { name: sonata.admin, manager_type: orm, label: Book }
+        calls:
+            - [setFileUploadService, ['@App\Service\FileUploadService']]
