@@ -106,6 +106,18 @@
     "friendsofphp/proxy-manager-lts": {
         "version": "v1.0.5"
     },
+    "jms/metadata": {
+        "version": "2.5.1"
+    },
+    "jms/serializer": {
+        "version": "3.15.0"
+    },
+    "knplabs/knp-menu": {
+        "version": "v3.3.0"
+    },
+    "knplabs/knp-menu-bundle": {
+        "version": "v3.2.0"
+    },
     "laminas/laminas-code": {
         "version": "4.4.3"
     },
@@ -135,6 +147,9 @@
     },
     "phpspec/prophecy": {
         "version": "1.14.0"
+    },
+    "phpstan/phpdoc-parser": {
+        "version": "1.2.0"
     },
     "phpunit/php-code-coverage": {
         "version": "9.2.8"
@@ -236,6 +251,42 @@
         "files": [
             "./config/packages/sensio_framework_extra.yaml"
         ]
+    },
+    "sonata-project/admin-bundle": {
+        "version": "4.2",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "master",
+            "version": "4.0",
+            "ref": "0e5931df1732e3dccfba42a20853049e5e9db6ae"
+        }
+    },
+    "sonata-project/block-bundle": {
+        "version": "4.8.0"
+    },
+    "sonata-project/cache": {
+        "version": "2.2.0"
+    },
+    "sonata-project/doctrine-extensions": {
+        "version": "1.15.0"
+    },
+    "sonata-project/doctrine-orm-admin-bundle": {
+        "version": "4.1.0"
+    },
+    "sonata-project/exporter": {
+        "version": "2.9.0"
+    },
+    "sonata-project/form-extensions": {
+        "version": "1.12",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "master",
+            "version": "1.4",
+            "ref": "9c8a1e8ce2b1f215015ed16652c4ed18eb5867fd"
+        }
+    },
+    "sonata-project/twig-extensions": {
+        "version": "1.9.0"
     },
     "symfony/asset": {
         "version": "v4.4.27"
@@ -430,6 +481,9 @@
             "./tests/bootstrap.php"
         ]
     },
+    "symfony/polyfill-intl-grapheme": {
+        "version": "v1.23.1"
+    },
     "symfony/polyfill-intl-icu": {
         "version": "v1.23.0"
     },
@@ -480,6 +534,9 @@
             "./config/packages/prod/routing.yaml"
         ]
     },
+    "symfony/security-acl": {
+        "version": "v3.2.0"
+    },
     "symfony/security-bundle": {
         "version": "4.4",
         "recipe": {
@@ -512,6 +569,9 @@
     },
     "symfony/stopwatch": {
         "version": "v4.4.27"
+    },
+    "symfony/string": {
+        "version": "v5.3.10"
     },
     "symfony/translation": {
         "version": "4.4",
@@ -589,6 +649,9 @@
         "version": "1.2.1"
     },
     "twig/extra-bundle": {
+        "version": "v3.3.3"
+    },
+    "twig/string-extra": {
         "version": "v3.3.3"
     },
     "twig/twig": {
