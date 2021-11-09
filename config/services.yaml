@@ -4,7 +4,7 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
-    bookcovers_directory: '%kernel.project_dir%/public/uploads/covers/'
+    bookcovers_directory: "%kernel.project_dir%/public/uploads/covers/"
     symfony:
         container_xml_path: var/cache/dev/srcApp_KernelDevDebugContainer.xml
     doctrine:
@@ -13,29 +13,48 @@ parameters:
 services:
     # default configuration for services in *this* file
     _defaults:
-        autowire: true      # Automatically injects dependencies in your services.
+        autowire: true # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
     App\:
-        resource: '../src/'
+        resource: "../src/"
         exclude:
-            - '../src/DependencyInjection/'
-            - '../src/Entity/'
-            - '../src/Kernel.php'
-            - '../src/Tests/'
+            - "../src/DependencyInjection/"
+            - "../src/Entity/"
+            - "../src/Kernel.php"
+            - "../src/Tests/"
 
     # controllers are imported separately to make sure services can be injected
     # as action arguments even if you don't extend any base controller class
     App\Controller\:
-        resource: '../src/Controller/'
-        tags: ['controller.service_arguments']
+        resource: "../src/Controller/"
+        tags: ["controller.service_arguments"]
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
 
     App\Event\:
-        resource: '../src/Event/'
+        resource: "../src/Event/"
         tags:
-            - { name: 'doctrine.event_subscriber', connection: default }
+            - { name: "doctrine.event_subscriber", connection: default }
+
+    App\Service\FileUploadService:
+        public: true
+
+    admin.authors:
+        class: App\Admin\AuthorAdmin
+        arguments: [~, App\Entity\Author, ~]
+        tags:
+            - { name: sonata.admin, manager_type: orm, label: "Author" }
+
+    admin.books:
+        class: App\Admin\BookAdmin
+        arguments: [~, App\Entity\Book, ~]
+        tags:
+            - { name: sonata.admin, manager_type: orm, label: Book }
+            - { name: kernel.event_listener, event: sonata.admin.event.persistence.pre_update, method: preUpdate }
+            - { name: kernel.event_listener, event: sonata.admin.event.persistence.pre_persist, method: prePersist }
+        calls:
+            - [setFileUploadService, ['@App\Service\FileUploadService']]

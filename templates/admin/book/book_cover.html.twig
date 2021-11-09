@@ -1,0 +1,5 @@
+{% extends '@SonataAdmin/CRUD/base_list_field.html.twig' %}
+
+{% block field %}
+    <img src="/uploads/covers/{{ object.cover }}" class="admin-preview"/>
+{% endblock %}
