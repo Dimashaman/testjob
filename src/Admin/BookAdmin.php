@@ -74,12 +74,12 @@ final class BookAdmin extends AbstractAdmin
         $this->fileUploadService = $fileUploadService;
     }
 
-    public function prePersist(object $book): void
+    public function prePersist($book): void
     {
         $this->manageImageUpload($book);
     }
 
-    public function preUpdate(object $book): void
+    public function preUpdate($book): void
     {
         if ($book->getCover()) {
             $this->manageImageUpload($book);
