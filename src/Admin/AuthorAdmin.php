@@ -34,7 +34,8 @@ final class AuthorAdmin extends AbstractAdmin
 
     protected function configureListFields(ListMapper $list): void
     {
-        $list->addIdentifier('name');
+        $list->addIdentifier('name')
+        ->add('booksAmount');
     }
 
     protected function configureShowFields(ShowMapper $show): void
