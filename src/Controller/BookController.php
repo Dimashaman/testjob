@@ -5,6 +5,7 @@ namespace App\Controller;
 use Exception;
 use App\Entity\Book;
 use App\Form\BookType;
+use App\Dto\BookFilterDto;
 use Doctrine\ORM\EntityManager;
 use App\Repository\BookRepository;
 use App\Service\FileUploadService;
@@ -13,6 +14,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Validator\ConstraintViolationList;
 
 /**
  * @Route("/book")
@@ -33,12 +35,19 @@ class BookController extends AbstractController
     /**
      * @Route("/filter", name="book_filter", methods={"GET"})
      */
-    public function filter(Request $request, BookRepository $bookRepository, AuthorRepository $authorRepository) : Response
+    public function filter(BookRepository $bookRepository, AuthorRepository $authorRepository, BookFilterDto $bookFilterDTO) : Response
     {
-        return $this->render('book/index.html.twig', [
-            'books' => $bookRepository->applyFilters($request),
-            'authors' => $authorRepository->findAll()
-        ]);
+        $books = $bookRepository->applyFilters($bookFilterDTO->fromRequest());
+        $response = [];
+        if ($books instanceof ConstraintViolationList) {
+            $response['errors'] = $books;
+        } else {
+            $response['books'] = $books;
+        }
+
+        $response['authors'] = $authorRepository->findAll();
+        
+        return $this->render('book/index.html.twig', $response);
     }
 
     /**

@@ -13,6 +13,7 @@
 
 		<div class="col-sm">
 			<select name="author">
+					<option value="0"></option>
 				{% for author in authors %}
 					<option value="{{author.id}}">{{author.name}}</option>
                 {% endfor %}

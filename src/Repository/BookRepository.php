@@ -4,9 +4,8 @@ namespace App\Repository;
 
 use App\Entity\Book;
 use App\Entity\Author;
-use Doctrine\ORM\Query\ResultSetMapping;
+use App\Dto\BookFilterDto;
 use Doctrine\Persistence\ManagerRegistry;
-use Symfony\Component\HttpFoundation\Request;
 use Doctrine\ORM\Query\ResultSetMappingBuilder;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
@@ -85,21 +84,21 @@ class BookRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    /**
-     * @param Request $request
-     * @return Book[]
-     */
-    public function applyFilters(Request $request)
+    public function applyFilters(BookFilterDto $bookFilterDTO)
     {
+        if($bookFilterDTO->errors) {
+            return $bookFilterDTO->errors;
+        }
+
         $qb = $this->createQueryBuilder('b');
         $stringFilters = array_filter([
-            'title' => (string) $request->query->get('title'),
-            'description' => (string) $request->query->get('description')
+            'title' => (string) $bookFilterDTO->title,
+            'description' => (string) $bookFilterDTO->description,
         ]);
         
         $integerFilters = array_filter([
-            'id' => (int) $request->query->get('id'),
-            'publishYear' => (int) $request->query->get('publishYear')
+            'id' => (int) $bookFilterDTO->id,
+            'publishYear' => (int) $bookFilterDTO->publishYear
         ]);
 
         foreach ($stringFilters as $key => $value) {
@@ -112,7 +111,7 @@ class BookRepository extends ServiceEntityRepository
             ->setParameter('intval', $value);
         }
 
-        if ($author = $request->query->get('author')) {
+        if ($author = $bookFilterDTO->author) {
             $qb->leftJoin('b.authors', 'a')
             ->andWhere('a.id = :authorId')
             ->setParameter('authorId', intval($author));

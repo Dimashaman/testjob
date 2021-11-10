@@ -15,7 +15,15 @@
 			<div class="col-sm">Authors</div>
 			<div class="col-sm">actions</div>
 		</div>
+{% if authors is defined %}
 {% include 'book/_inline_filter.html.twig' with {'authors': authors } %}
+{% endif %}
+{% if errors is defined %}
+		{% for error in errors %}
+				{{ error.message }}
+		{% endfor %}
+{% endif %}
+{% if books is defined %}
 		{% for book in books %}
 			{% include 'book/_inline.html.twig' with {'book': book } %}
 		{% else %}
@@ -23,6 +31,7 @@
 				<span class="td" colspan="6">no records found</span>
 			</div>
 		{% endfor %}
+{% endif %}
 	</div>
 </div>
 <a href="{{ path('book_new') }}">Create new</a>
