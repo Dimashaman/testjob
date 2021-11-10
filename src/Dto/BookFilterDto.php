@@ -37,8 +37,6 @@ class BookFilterDto
      * @Assert\PositiveOrZero
      */
     public $author;
-    
-    private Request $request;
    
     public function createFromQueryParams($queryParams)
     {
