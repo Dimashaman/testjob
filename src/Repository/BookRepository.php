@@ -86,10 +86,6 @@ class BookRepository extends ServiceEntityRepository
 
     public function applyFilters(BookFilterDto $bookFilterDTO)
     {
-        if($bookFilterDTO->errors) {
-            return $bookFilterDTO->errors;
-        }
-
         $qb = $this->createQueryBuilder('b');
         $stringFilters = array_filter([
             'title' => (string) $bookFilterDTO->title,

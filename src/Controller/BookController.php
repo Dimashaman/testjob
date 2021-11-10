@@ -13,8 +13,8 @@ use App\Repository\AuthorRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Validator\ConstraintViolationList;
 
 /**
  * @Route("/book")
@@ -35,19 +35,21 @@ class BookController extends AbstractController
     /**
      * @Route("/filter", name="book_filter", methods={"GET"})
      */
-    public function filter(BookRepository $bookRepository, AuthorRepository $authorRepository, BookFilterDto $bookFilterDTO) : Response
+    public function filter(Request $request, BookRepository $bookRepository, AuthorRepository $authorRepository, BookFilterDto $bookFilterDTO, ValidatorInterface $validator) : Response
     {
-        $books = $bookRepository->applyFilters($bookFilterDTO->fromRequest());
-        $response = [];
-        if ($books instanceof ConstraintViolationList) {
-            $response['errors'] = $books;
-        } else {
-            $response['books'] = $books;
+        $bookFilterDTO = $bookFilterDTO->createFromQueryParams($request->query->all());
+        $errors = $validator->validate($bookFilterDTO);
+        
+        if (count($errors) > 0) {
+            return $this->render('book/index.html.twig', ['errors' => $errors]);
         }
 
-        $response['authors'] = $authorRepository->findAll();
+        $books = $bookRepository->applyFilters($bookFilterDTO);
         
-        return $this->render('book/index.html.twig', $response);
+        return $this->render('book/index.html.twig', [
+            'books' => $books,
+            'authors' => $authorRepository->findAll(),
+        ]);
     }
 
     /**

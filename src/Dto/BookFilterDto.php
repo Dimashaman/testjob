@@ -2,11 +2,7 @@
 
 namespace App\Dto;
 
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class BookFilterDto
 {
@@ -41,36 +37,16 @@ class BookFilterDto
      * @Assert\PositiveOrZero
      */
     public $author;
-
-    public $errors;
-
-    private ValidatorInterface $validator;
     
     private Request $request;
-
-    public function __construct(ValidatorInterface $validator, RequestStack $requestStack)
-    {
-        $this->validator = $validator;
-        $this->request = $requestStack->getCurrentRequest();
-    }
    
-    /**
-     * Undocumented function
-     *
-     * @return BookFilterDto | Response
-     */
-    public function fromRequest()
+    public function createFromQueryParams($queryParams)
     {
-        $this->id = (int) $this->request->query->get('id');
-        $this->title = (string) $this->request->query->get('title');
-        $this->description = (string) $this->request->query->get('description');
-        $this->publishYear = (int) $this->request->query->get('publishYear');
-        $this->author = (int) $this->request->query->get('author');
-
-        $errors = $this->validator->validate($this);
-        if (count($errors) > 0) {
-            $this->errors = $errors;
-        }
+        $this->id = (int) $queryParams['id'];
+        $this->title = (string) $queryParams['title'];
+        $this->description = (string) $queryParams['description'];
+        $this->publishYear = (int) $queryParams['publishYear'];
+        $this->author = (int) $queryParams['author'];
 
         return $this;
     }
